@@ -74,7 +74,10 @@ class Program
                     </html>
                     """;
 
-                responseHeaders = HttpUtils.CommonHttpResponseHeader(responseBody.Length);
+                responseHeaders = HttpUtils.CommonHttpResponseHeader(
+                    responseBody.Length,
+                    "404 Not Found"
+                );
                 break;
         }
 
@@ -91,9 +94,9 @@ class Program
 
 static class HttpUtils
 {
-    public static string CommonHttpResponseHeader(int bodyLength)
+    public static string CommonHttpResponseHeader(int bodyLength, string status = "200 OK")
     {
-        return "HTTP/1.1 200 OK\r\n"
+        return $"HTTP/1.1 {status}\r\n"
             + "Content-Type: text/html; charset=utf-8\r\n"
             + $"Content-Length: {bodyLength}\r\n"
             + "Connection: close\r\n"
