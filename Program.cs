@@ -30,22 +30,55 @@ class Program
         Console.WriteLine(requestText);
         Console.WriteLine("-----------------------");
 
-        var body = """
-            <html>
-                <body>
-                    <h1>Hello form mxHttp server! </h1>
-                </body>
-            </html>
-            """;
+        var requestLines = requestText.Split(['\r', '\n']);
+        var route = requestLines[0].Split(' ')[1];
 
-        var bodyBytes = Encoding.UTF8.GetBytes(body);
+        Console.WriteLine(route);
 
-        var responseHeaders =
-            "HTTP/1.1 200 OK\r\n"
-            + "Content-Type: text/html; charset=utf-8\r\n"
-            + $"Content-Length: {bodyBytes.Length}\r\n"
-            + "Connection: close\r\n"
-            + "\r\n";
+        string responseHeaders;
+        string responseBody;
+
+        switch (route)
+        {
+            case "/":
+                responseBody = """
+                    <html>
+                        <body>
+                            <h1>Hello from mxHttp server! </h1>
+                        </body>
+                    </html>
+                    """;
+
+                responseHeaders = HttpUtils.CommonHttpResponseHeader(responseBody.Length);
+                break;
+
+            case "/about":
+                responseBody = """
+                    <html>
+                        <body>
+                            <h1>You are on the about page of mxHttp server! </h1>
+                        </body>
+                    </html>
+                    """;
+
+                responseHeaders = HttpUtils.CommonHttpResponseHeader(responseBody.Length);
+                break;
+
+            default:
+
+                responseBody = """
+                    <html>
+                        <body>
+                            <h1>404 not found! </h1>
+                        </body>
+                    </html>
+                    """;
+
+                responseHeaders = HttpUtils.CommonHttpResponseHeader(responseBody.Length);
+                break;
+        }
+
+        var bodyBytes = Encoding.UTF8.GetBytes(responseBody);
 
         var headerBytes = Encoding.UTF8.GetBytes(responseHeaders);
 
@@ -53,5 +86,17 @@ class Program
         await stream.WriteAsync(bodyBytes);
 
         client.Close();
+    }
+}
+
+static class HttpUtils
+{
+    public static string CommonHttpResponseHeader(int bodyLength)
+    {
+        return "HTTP/1.1 200 OK\r\n"
+            + "Content-Type: text/html; charset=utf-8\r\n"
+            + $"Content-Length: {bodyLength}\r\n"
+            + "Connection: close\r\n"
+            + "\r\n";
     }
 }
