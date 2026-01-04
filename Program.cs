@@ -64,6 +64,13 @@ class Program
                 responseHeaders = HttpUtils.CommonHttpResponseHeader(responseBody.Length);
                 break;
 
+            case "/index":
+                responseBody = File.ReadAllText(
+                    Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "wwwroot/index.html")
+                );
+                responseHeaders = HttpUtils.CommonHttpResponseHeader(responseBody.Length);
+                break;
+
             default:
 
                 responseBody = """
